@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -8,15 +9,22 @@ public class PlayerHandler : MonoBehaviour
 
     public int numberOfPlayers = 1;
     public CityHandler cityHandler;
+    public TerrainGeneration terrainGeneration;
 
     public List<Player> players = new List<Player>();
 
+    public int currentPlayer = 0;   
+
     public List<bool> takenTiles = new List<bool>();
+
+    public GameObject mainCamera;
+    public List<GameObject> playerCameras = new List<GameObject>();
 
     public float measureError = 0.5f;
 
     void Start()
     {
+        playerCameras.Add(mainCamera);
         if (numberOfPlayers > cityHandler.cityCount)
         {
             Debug.LogError(" cities are not enough for " + numberOfPlayers + " players");
@@ -26,6 +34,12 @@ public class PlayerHandler : MonoBehaviour
         for (int i = 0; i < numberOfPlayers; i++)
         {
             players.Add(new Player());
+        }
+
+        for(int i = 0; i < numberOfPlayers - 1; i++)
+        {
+            playerCameras.Add(Instantiate(mainCamera));
+            playerCameras[i+1].active = false;
         }
 
         
@@ -39,7 +53,7 @@ public class PlayerHandler : MonoBehaviour
         {
             yield return null;
         }
-        for (int i = 0; i < cityHandler.terrainGeneration.tiles.Count; i++)
+        for (int i = 0; i < terrainGeneration.tiles.Count; i++)
         {
             takenTiles.Add(false);
         }
@@ -61,13 +75,19 @@ public class PlayerHandler : MonoBehaviour
             players[i].name = "Player " + i;
             players[i].capitalCity = new PlayerCity();
             players[i].capitalCity.cityIndex = cityIndexes[Random.Range(0, cityIndexes.Count - 1)];
-            players[i].capitalCity.GetCityTiles(takenTiles, cityHandler.terrainGeneration, cityHandler, measureError, playerColor);
-            players[i].capitalCity.IncreaseCitySize(takenTiles, cityHandler.terrainGeneration, cityHandler, measureError, playerColor);
+            players[i].capitalCity.GetCityTiles(takenTiles, terrainGeneration, cityHandler, measureError, playerColor);
+            players[i].capitalCity.IncreaseCitySize(takenTiles, terrainGeneration, cityHandler, measureError, playerColor);
 
             players[i].playerCities.Add(players[i].capitalCity);
             
             cityIndexes.Remove(players[i].capitalCity.cityIndex);
             cityHandler.cities[players[i].capitalCity.cityIndex].GetComponent<MeshRenderer>().material.color = playerColor;
+
+            Vector3 cameraToMiddle = terrainGeneration.middleTile.transform.position - playerCameras[i].transform.position;
+            // newCamPos + cameraToMiddle = playerCapitalCityPos => newCamPos = playerCapitalCityPos - cameraToMiddle
+            playerCameras[i].transform.position = cityHandler.cities[players[i].capitalCity.cityIndex].transform.position - cameraToMiddle;
+            playerCameras[i].GetComponent<CameraMovement>().rotaionPivot = cityHandler.cities[players[i].capitalCity.cityIndex].transform.position;
+
         }
     }
 
@@ -75,6 +95,24 @@ public class PlayerHandler : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void EndTurn()
+    {
+        if (currentPlayer == numberOfPlayers - 1)
+        {
+            currentPlayer = 0;
+        }
+        else
+        {
+            currentPlayer++;
+        }
+        for (int i = 0; i < numberOfPlayers; i++)
+        {
+            playerCameras[i].active = false;
+        }
+        playerCameras[currentPlayer].active = true;
+
     }
 }
 
@@ -104,7 +142,7 @@ public class PlayerCity
         
         if (cityTileIndex - 1 >= 0)
         {
-            if (takenTiles[cityTileIndex - 1] == false && cityHandler.terrainGeneration.tiles[cityTileIndex - 1].transform.position.z == cityHandler.terrainGeneration.tiles[cityTileIndex].transform.position.z)
+            if (takenTiles[cityTileIndex - 1] == false && terrainGeneration.tiles[cityTileIndex - 1].transform.position.z == terrainGeneration.tiles[cityTileIndex].transform.position.z)
             {
                 cityTiles.Add(cityTileIndex - 1);
                 takenTiles[cityTileIndex - 1] = true;
@@ -112,7 +150,7 @@ public class PlayerCity
         }
         
         
-        if (takenTiles[cityTileIndex + 1] == false && cityHandler.terrainGeneration.tiles[cityTileIndex + 1].transform.position.z == cityHandler.terrainGeneration.tiles[cityTileIndex].transform.position.z)
+        if (takenTiles[cityTileIndex + 1] == false && terrainGeneration.tiles[cityTileIndex + 1].transform.position.z == terrainGeneration.tiles[cityTileIndex].transform.position.z)
         {
             cityTiles.Add(cityTileIndex + 1);
             takenTiles[cityTileIndex + 1] = true;

@@ -7,6 +7,7 @@ public class CameraMovement : MonoBehaviour
 {
     public float speed;
     public TerrainGeneration terrainGenerationInstace;
+    public Vector3 rotaionPivot;
     
     void Update()
     {
@@ -25,21 +26,28 @@ public class CameraMovement : MonoBehaviour
         {
             float inputX = Input.GetAxisRaw("Mouse X");
             float inputY = Input.GetAxisRaw("Mouse Y");
-            transform.position += new Vector3(-inputX, 0, -inputY);
+
+            Vector3 moveDirection = (-inputX * transform.right) + (-inputY * transform.forward);
+            transform.position += new Vector3(moveDirection.x, 0, moveDirection.z);
         }
+
 
         if (Input.GetMouseButton(1))
         {
+            float speed = 2;
             float inputY = Input.GetAxisRaw("Mouse X");
-            
 
-            
+            if (rotaionPivot == null)
+            {
+                rotaionPivot = terrainGenerationInstace.middleTile.transform.position;
+            }
 
-            /*transform.Rotate(new Vector3(
-                terrainGenerationInstace.middleTile.transform.position.x,
+            Vector3 pivot = new Vector3(
+                rotaionPivot.x,
                 transform.position.y,
-                terrainGenerationInstace.middleTile.transform.position.z
-                ), inputY);*/
+                rotaionPivot.z);
+
+            transform.RotateAround(pivot, Vector3.up, inputY * speed);
         }
 
         if (Input.GetAxisRaw("Mouse ScrollWheel") != 0)
@@ -52,7 +60,12 @@ public class CameraMovement : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            
+            Vector3 pivot = new Vector3(
+                terrainGenerationInstace.middleTile.transform.position.x,
+                transform.position.y,
+                terrainGenerationInstace.middleTile.transform.position.z);
+
+            transform.RotateAround(pivot, Vector3.up, 60);
         }
     }
 

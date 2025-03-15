@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(TerrainGeneration))]
 public class ForestHandler : MonoBehaviour
@@ -49,6 +47,7 @@ public class ForestHandler : MonoBehaviour
                 forest.transform.rotation = Quaternion.Euler(forestRotation);
                 forests.Add(forest);
                 StartCoroutine(animateForest(forest));
+                forestTile.GetComponent<Tile>().isForest = true;
             }
             yield return new WaitForSeconds(0.01f);
         }

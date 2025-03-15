@@ -79,6 +79,7 @@ public class CityHandler : MonoBehaviour
                 city.transform.parent = terrainGeneration.tiles[bestIndex].transform;
                 city.transform.rotation = Quaternion.Euler(houseRotation);
                 cities.Add(city);
+                terrainGeneration.tiles[bestIndex].GetComponent<Tile>().isCity = true;
 
                 //StartCoroutine(animateCity(city));
             }

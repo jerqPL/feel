@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class TerrainGeneration : MonoBehaviour
 {
@@ -94,6 +95,11 @@ public class TerrainGeneration : MonoBehaviour
                 newTile.GetComponent<MeshRenderer>().material.color = color;
                 newTile.transform.parent = transform;
                 tiles.Add(newTile);
+                Tile tileComponent = newTile.AddComponent<Tile>();
+                tileComponent.index = tiles.Count - 1;
+                tileComponent.biome = ColorToIndex(color).ToString();
+
+
                 newTile.active = false;
                 if (color.g > color.r && color.g > color.b)
                 {
@@ -103,6 +109,7 @@ public class TerrainGeneration : MonoBehaviour
                 if ((i == 0 || i == mapRadius / 2 + j - 1) && (j == 0 || j == mapRadius / 2 - 1))
                 {
                     cornders.Add(newTile);
+                    tileComponent.isCorner = true;
                 }
 
 
@@ -110,6 +117,7 @@ public class TerrainGeneration : MonoBehaviour
                 {
                     edges.Add(newTile);
                     edgeIndexes.Add(tiles.Count - 1);
+                    tileComponent.isEdge = true;
                 }
 
                 if (j == mapRadius / 2 - 1 && i == (mapRadius / 2 + j - 1) / 2)
@@ -139,6 +147,11 @@ public class TerrainGeneration : MonoBehaviour
                 newTile.GetComponent<MeshRenderer>().material.color = color;
                 newTile.transform.parent = transform;
                 tiles.Add(newTile);
+
+                Tile tileComponent = newTile.AddComponent<Tile>();
+                tileComponent.index = tiles.Count - 1;
+                tileComponent.biome = ColorToIndex(color).ToString();
+
                 newTile.active = false;
                 if (color.g > color.r && color.g > color.b)
                 {
@@ -155,6 +168,8 @@ public class TerrainGeneration : MonoBehaviour
                 if ((i == 0 || i == mapRadius - j - 2) && (j == 0 || j == mapRadius / 2 - 1))
                 {
                     cornders.Add(newTile);
+                    tileComponent.isCorner = true;
+
                 }
 
 
@@ -162,6 +177,7 @@ public class TerrainGeneration : MonoBehaviour
                 {
                     edges.Add(newTile);
                     edgeIndexes.Add(tiles.Count - 1);
+                    tileComponent.isEdge = true;
                 }
 
                 //yield return null;
@@ -351,4 +367,14 @@ public class TerrainGeneration : MonoBehaviour
         yield return animateTile(tile);
         terrainBuilt = true;
     }
+}
+
+public class Tile : MonoBehaviour
+{
+    public int index;
+    public string biome;
+    public bool isForest;
+    public bool isCity;
+    public bool isCorner;
+    public bool isEdge;
 }

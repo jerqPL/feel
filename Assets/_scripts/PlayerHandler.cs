@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerHandler : MonoBehaviour
@@ -73,6 +74,7 @@ public class PlayerHandler : MonoBehaviour
             Color playerColor = new Color(Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2));
             playerColor = Color.magenta;
             players[i].name = "Player " + i;
+            players[i].playerColor = playerColor;
             players[i].capitalCity = new PlayerCity();
             players[i].capitalCity.cityIndex = cityIndexes[Random.Range(0, cityIndexes.Count - 1)];
             players[i].capitalCity.GetCityTiles(takenTiles, terrainGeneration, cityHandler, measureError, playerColor);
@@ -113,6 +115,22 @@ public class PlayerHandler : MonoBehaviour
         }
         playerCameras[currentPlayer].active = true;
 
+    }
+
+    public void SelectedCity(int index)
+    {
+        Debug.Log("City " + index + " selected");
+        for (int i = 0; i < numberOfPlayers; i++)
+        {
+            for (int j = 0; j < players[i].playerCities.Count; j++)
+            {
+                if (players[i].playerCities[j].cityIndex == index)
+                {
+                    players[i].playerCities[j].IncreaseCitySize(takenTiles, terrainGeneration, cityHandler, measureError, players[i].playerColor);
+                }
+            }
+
+        }
     }
 }
 
@@ -201,4 +219,6 @@ public class PlayerCity
             }
         }
     }
+
+    
 }

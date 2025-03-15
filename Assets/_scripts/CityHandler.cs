@@ -7,6 +7,7 @@ public class CityHandler : MonoBehaviour
 {
     public TerrainGeneration terrainGeneration;
     public GameObject cityPrefab;
+    public PlayerHandler playerHandler;
     public int cityCount = 10;
     public List<GameObject> cities = new List<GameObject>();
     public List<int> cityIndexes = new List<int>();
@@ -115,6 +116,12 @@ public class CityHandler : MonoBehaviour
     {
         yield return animateCity(city);
         citiesBuilt = true;
+    }
+
+    public void SelectedCity(int index)
+    {
+        Debug.Log("City " + index + " selected");
+        playerHandler.SelectedCity(    cityIndexes.IndexOf(index)   );
     }
 
 

@@ -54,7 +54,7 @@ public class CameraMovement : MonoBehaviour
         {
             float delta = -Input.GetAxisRaw("Mouse ScrollWheel");
             
-            Vector3 direction = transform.position - terrainGenerationInstace.middleTile.transform.position;
+            Vector3 direction = transform.position - rotaionPivot;
 
             transform.position = transform.position + direction * delta;
         }
@@ -66,6 +66,15 @@ public class CameraMovement : MonoBehaviour
                 terrainGenerationInstace.middleTile.transform.position.z);
 
             transform.RotateAround(pivot, Vector3.up, 60);
+        }
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            Vector3 pivot = new Vector3(
+                terrainGenerationInstace.middleTile.transform.position.x,
+                transform.position.y,
+                terrainGenerationInstace.middleTile.transform.position.z);
+
+            transform.RotateAround(pivot, Vector3.up, -60);
         }
     }
 

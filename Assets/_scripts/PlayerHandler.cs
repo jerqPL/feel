@@ -78,12 +78,14 @@ public class PlayerHandler : MonoBehaviour
         for (int i = 0; i < numberOfPlayers; i++)
         {
             Color playerColor = new Color(Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2));
-            playerColor = Color.magenta;
+            Color playerColorEdge = playerColor / 2;
+            playerColorEdge.a = 1;
             players[i].name = "Player " + i;
             players[i].playerColor = playerColor;
+            players[i].playerColorEdge = playerColorEdge;
             players[i].capitalCity = new PlayerCity();
             players[i].capitalCity.cityIndex = cityIndexes[Random.Range(0, cityIndexes.Count - 1)];
-            players[i].capitalCity.GetCityTiles(takenTiles, terrainGeneration, cityHandler, measureError, playerColor);
+            players[i].capitalCity.GetCityTiles(takenTiles, terrainGeneration, cityHandler, measureError, players[currentPlayer]);
             //players[i].capitalCity.IncreaseCitySize(takenTiles, terrainGeneration, cityHandler, measureError, playerColor);
 
             players[i].playerCities.Add(players[i].capitalCity);
@@ -155,8 +157,9 @@ public class PlayerHandler : MonoBehaviour
         int forestTileIndex = forestHandler.forestIndexes[index];
         for (int i = 0; i < players[currentPlayer].playerCities.Count; i++)
         {
-            if (players[currentPlayer].playerCities[i].cityTiles.Contains(forestTileIndex) && playerGold[currentPlayer] > goldCost)
+            if (players[currentPlayer].playerCities[i].cityTiles.Contains(forestTileIndex) && playerGold[currentPlayer] >= goldCost)
             {
+                terrainGeneration.tiles[forestTileIndex].GetComponent<Tile>().isForest = false;
                 playerGold[currentPlayer] -= goldCost;
                 Debug.Log("found city");
                 players[currentPlayer].playerCities[i].requiredUpgrades -= 1;
@@ -165,8 +168,8 @@ public class PlayerHandler : MonoBehaviour
                     players[currentPlayer].playerCities[i].tier += 1;
                     players[currentPlayer].goldGain += 1;
                     players[currentPlayer].playerCities[i].goldGain += 1;
-                    players[currentPlayer].playerCities[i].requiredUpgrades = ((int)Mathf.Pow(2, players[currentPlayer].playerCities[i].tier - 1));
-                    players[currentPlayer].playerCities[i].IncreaseCitySize(takenTiles, terrainGeneration, cityHandler, measureError, players[currentPlayer].playerColor);
+                    players[currentPlayer].playerCities[i].requiredUpgrades = ((int)2 * players[currentPlayer].playerCities[i].tier - 1);
+                    players[currentPlayer].playerCities[i].IncreaseCitySize(takenTiles, terrainGeneration, cityHandler, measureError, players[currentPlayer]);
                     
                 }
 
@@ -183,6 +186,7 @@ public class Player
     public List<PlayerCity> playerCities = new List<PlayerCity>();
     public string name;
     public Color playerColor;
+    public Color playerColorEdge;
     public int goldGain = 1;
 
 }
@@ -191,11 +195,12 @@ public class PlayerCity
 {
     public int cityIndex;
     public List<int> cityTiles = new List<int>();
+    public List<int> lastAddedTiles = new List<int>();
     public int goldGain = 1;
     public int tier = 1;
     public int requiredUpgrades = 1;
 
-    public void GetCityTiles(List<bool> takenTiles, TerrainGeneration terrainGeneration, CityHandler cityHandler, float measureError, Color color)
+    public void GetCityTiles(List<bool> takenTiles, TerrainGeneration terrainGeneration, CityHandler cityHandler, float measureError, Player player)
     {
      
         Debug.Log("City Index: " + cityIndex);
@@ -210,6 +215,7 @@ public class PlayerCity
             if (takenTiles[cityTileIndex - 1] == false && terrainGeneration.tiles[cityTileIndex - 1].transform.position.z == terrainGeneration.tiles[cityTileIndex].transform.position.z)
             {
                 cityTiles.Add(cityTileIndex - 1);
+                lastAddedTiles.Add(cityTileIndex - 1);
                 takenTiles[cityTileIndex - 1] = true;
             }
         }
@@ -218,52 +224,69 @@ public class PlayerCity
         if (takenTiles[cityTileIndex + 1] == false && terrainGeneration.tiles[cityTileIndex + 1].transform.position.z == terrainGeneration.tiles[cityTileIndex].transform.position.z)
         {
             cityTiles.Add(cityTileIndex + 1);
+            lastAddedTiles.Add(cityTileIndex + 1);
             takenTiles[cityTileIndex + 1] = true;
         }
         for (int i = cityTileIndex+2; i < terrainGeneration.tiles.Count; i++)
         {
             Debug.Log("i: " + i);
-            if (Vector3.Distance(terrainGeneration.tiles[i].transform.position, terrainGeneration.tiles[cityTileIndex].transform.position) < (Mathf.Sqrt(3) + measureError) * terrainGeneration.tileRadius)
+            if (Vector3.Distance(terrainGeneration.tiles[i].transform.position, terrainGeneration.tiles[cityTileIndex].transform.position) < (Mathf.Sqrt(3) + measureError) * terrainGeneration.tileRadius && !takenTiles[i])
             {
 
                 cityTiles.Add(i);
+                lastAddedTiles.Add(i);
                 takenTiles[i] = true;
             }
         }
         for (int i = cityTileIndex - 2; i >= 0; i--)
         {
             Debug.Log("i: " + i);
-            if (Vector3.Distance(terrainGeneration.tiles[i].transform.position, terrainGeneration.tiles[cityTileIndex].transform.position) < (Mathf.Sqrt(3) + measureError) * terrainGeneration.tileRadius)
+            if (Vector3.Distance(terrainGeneration.tiles[i].transform.position, terrainGeneration.tiles[cityTileIndex].transform.position) < (Mathf.Sqrt(3) + measureError) * terrainGeneration.tileRadius && !takenTiles[i])
             {
 
                 cityTiles.Add(i);
+                lastAddedTiles.Add(i);
                 takenTiles[i] = true;
             }
         }
         foreach (int tileIndex in cityTiles)
         {
-            terrainGeneration.tiles[tileIndex].GetComponent<MeshRenderer>().material.color = color;
+            terrainGeneration.tiles[tileIndex].GetComponent<MeshRenderer>().material.color = player.playerColor;
+        }
+        foreach(int lastAddedTile in lastAddedTiles)
+        {
+            terrainGeneration.tiles[lastAddedTile].GetComponent<MeshRenderer>().material.color = player.playerColorEdge;
         }
     }
 
-    public void IncreaseCitySize(List<bool> takenTiles, TerrainGeneration terrainGeneration, CityHandler cityHandler, float measureError, Color color)
+    public void IncreaseCitySize(List<bool> takenTiles, TerrainGeneration terrainGeneration, CityHandler cityHandler, float measureError, Player player)
     {
         List<int> oldCityTiles = new List<int>();
-        foreach (int tileIndex in cityTiles)
+        foreach (int lastAddedTile in lastAddedTiles)
+        {
+            terrainGeneration.tiles[lastAddedTile].GetComponent<MeshRenderer>().material.color = player.playerColor;
+        }
+        foreach (int tileIndex in lastAddedTiles)
         {
             oldCityTiles.Add(tileIndex);
         }
+        lastAddedTiles.Clear();
         foreach (int tileIndex in oldCityTiles)
         {
             for (int i = 0; i < terrainGeneration.tiles.Count; i++)
             {
-                if (Vector3.Distance(terrainGeneration.tiles[i].transform.position, terrainGeneration.tiles[tileIndex].transform.position) < (Mathf.Sqrt(3) + measureError) * terrainGeneration.tileRadius)
+                if (Vector3.Distance(terrainGeneration.tiles[i].transform.position, terrainGeneration.tiles[tileIndex].transform.position) < (Mathf.Sqrt(3) + measureError) * terrainGeneration.tileRadius && !cityTiles.Contains(i) && !takenTiles[i])
                 {
                     cityTiles.Add(i);
+                    lastAddedTiles.Add(i);
                     takenTiles[i] = true;
-                    terrainGeneration.tiles[i].GetComponent<MeshRenderer>().material.color = color;
+                    //terrainGeneration.tiles[i].GetComponent<MeshRenderer>().material.color = color;
                 }
             }
+        }
+        foreach (int lastAddedTile in lastAddedTiles)
+        {
+            terrainGeneration.tiles[lastAddedTile].GetComponent<MeshRenderer>().material.color = player.playerColorEdge;
         }
     }
 

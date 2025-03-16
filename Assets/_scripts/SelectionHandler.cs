@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SelectionHandler : MonoBehaviour
@@ -9,24 +10,25 @@ public class SelectionHandler : MonoBehaviour
     public ForestHandler forestHandler;
     public int selectedTile;
 
+    public float clickDuration = 0f;
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0))
         {
-            StartCoroutine(isClick());
-            
+            clickDuration += Time.deltaTime;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            if (clickDuration < 0.2f)
+            {
+                AfterClick();
+            }
+            clickDuration = 0f;
+
         }
     }
-
-    IEnumerator isClick()
-    {
-        yield return new WaitForSeconds(0.1f);
-        if (!Input.GetKey(KeyCode.Mouse0))
-        {
-            AfterClick();
-        }
-    }
-
     void AfterClick()
     {
         Debug.Log("Mouse0");

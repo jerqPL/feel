@@ -156,6 +156,7 @@ MonoBehaviour:
   cityHandler: {fileID: 180350574}
   forestHandler: {fileID: 180350575}
   selectedTile: 0
+  clickDuration: 0
 --- !u!4 &75300349
 Transform:
   m_ObjectHideFlags: 0
@@ -258,7 +259,7 @@ MonoBehaviour:
   terrainGeneration: {fileID: 180350572}
   cityPrefab: {fileID: 6851578227324881206, guid: 5521d49c20b49dd4fa401d0e65b6a02d, type: 3}
   playerHandler: {fileID: 1126503332}
-  cityCount: 5
+  cityCount: 6
   cities: []
   cityIndexes: 
   houseRotation: {x: -90, y: 0, z: 0}
@@ -841,7 +842,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53f979c7ead6d234ab2ff3ae381934b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfPlayers: 2
+  numberOfPlayers: 5
   cityHandler: {fileID: 180350574}
   terrainGeneration: {fileID: 180350572}
   inGameUIHandler: {fileID: 1780015804}

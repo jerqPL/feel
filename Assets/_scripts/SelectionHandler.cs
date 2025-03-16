@@ -6,6 +6,7 @@ public class SelectionHandler : MonoBehaviour
 {
     public PlayerHandler playerHandler;
     public CityHandler cityHandler;
+    public ForestHandler forestHandler;
     public int selectedTile;
 
     void Update()
@@ -44,6 +45,11 @@ public class SelectionHandler : MonoBehaviour
                 {
                     cityHandler.SelectedCity(selectedTile);
                 }
+                else if (tile.GetComponent<Tile>().isForest)
+                {
+                    forestHandler.SelectedForest(selectedTile);
+                }
+
 
             }
         }

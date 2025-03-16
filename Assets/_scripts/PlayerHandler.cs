@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
@@ -11,6 +12,8 @@ public class PlayerHandler : MonoBehaviour
     public int numberOfPlayers = 1;
     public CityHandler cityHandler;
     public TerrainGeneration terrainGeneration;
+    public InGameUIHandler inGameUIHandler;
+    public ForestHandler forestHandler;
 
     public List<Player> players = new List<Player>();
 
@@ -22,6 +25,8 @@ public class PlayerHandler : MonoBehaviour
     public List<GameObject> playerCameras = new List<GameObject>();
 
     public float measureError = 0.5f;
+
+    public List<int> playerGold = new List<int>();
 
     void Start()
     {
@@ -35,6 +40,7 @@ public class PlayerHandler : MonoBehaviour
         for (int i = 0; i < numberOfPlayers; i++)
         {
             players.Add(new Player());
+            playerGold.Add(5);
         }
 
         for(int i = 0; i < numberOfPlayers - 1; i++)
@@ -78,7 +84,7 @@ public class PlayerHandler : MonoBehaviour
             players[i].capitalCity = new PlayerCity();
             players[i].capitalCity.cityIndex = cityIndexes[Random.Range(0, cityIndexes.Count - 1)];
             players[i].capitalCity.GetCityTiles(takenTiles, terrainGeneration, cityHandler, measureError, playerColor);
-            players[i].capitalCity.IncreaseCitySize(takenTiles, terrainGeneration, cityHandler, measureError, playerColor);
+            //players[i].capitalCity.IncreaseCitySize(takenTiles, terrainGeneration, cityHandler, measureError, playerColor);
 
             players[i].playerCities.Add(players[i].capitalCity);
             
@@ -91,6 +97,8 @@ public class PlayerHandler : MonoBehaviour
             playerCameras[i].GetComponent<CameraMovement>().rotaionPivot = cityHandler.cities[players[i].capitalCity.cityIndex].transform.position;
 
         }
+
+        inGameUIHandler.SetGold(playerGold[currentPlayer], players[currentPlayer].goldGain);
     }
 
     // Update is called once per frame
@@ -115,6 +123,13 @@ public class PlayerHandler : MonoBehaviour
         }
         playerCameras[currentPlayer].active = true;
 
+        for (int i = 0;  i < players[currentPlayer].playerCities.Count; i++)
+        {
+            playerGold[currentPlayer] += players[currentPlayer].playerCities[i].goldGain;
+        }
+
+        inGameUIHandler.SetGold(playerGold[currentPlayer], players[currentPlayer].goldGain);
+
     }
 
     public void SelectedCity(int index)
@@ -126,10 +141,38 @@ public class PlayerHandler : MonoBehaviour
             {
                 if (players[i].playerCities[j].cityIndex == index)
                 {
-                    players[i].playerCities[j].IncreaseCitySize(takenTiles, terrainGeneration, cityHandler, measureError, players[i].playerColor);
+                    //players[i].playerCities[j].IncreaseCitySize(takenTiles, terrainGeneration, cityHandler, measureError, players[i].playerColor);
                 }
             }
 
+        }
+    }
+
+    public void SelectedForest(int index)
+    {
+        int goldCost = 2;
+        Debug.Log("Forest " + index + " selected");
+        int forestTileIndex = forestHandler.forestIndexes[index];
+        for (int i = 0; i < players[currentPlayer].playerCities.Count; i++)
+        {
+            if (players[currentPlayer].playerCities[i].cityTiles.Contains(forestTileIndex) && playerGold[currentPlayer] > goldCost)
+            {
+                playerGold[currentPlayer] -= goldCost;
+                Debug.Log("found city");
+                players[currentPlayer].playerCities[i].requiredUpgrades -= 1;
+                if (players[currentPlayer].playerCities[i].requiredUpgrades <= 0)
+                {
+                    players[currentPlayer].playerCities[i].tier += 1;
+                    players[currentPlayer].goldGain += 1;
+                    players[currentPlayer].playerCities[i].goldGain += 1;
+                    players[currentPlayer].playerCities[i].requiredUpgrades = ((int)Mathf.Pow(2, players[currentPlayer].playerCities[i].tier - 1));
+                    players[currentPlayer].playerCities[i].IncreaseCitySize(takenTiles, terrainGeneration, cityHandler, measureError, players[currentPlayer].playerColor);
+                    
+                }
+
+                inGameUIHandler.SetGold(playerGold[currentPlayer], players[currentPlayer].goldGain);
+                forestHandler.DeleteForest(index);
+            }
         }
     }
 }
@@ -140,6 +183,7 @@ public class Player
     public List<PlayerCity> playerCities = new List<PlayerCity>();
     public string name;
     public Color playerColor;
+    public int goldGain = 1;
 
 }
 
@@ -147,6 +191,9 @@ public class PlayerCity
 {
     public int cityIndex;
     public List<int> cityTiles = new List<int>();
+    public int goldGain = 1;
+    public int tier = 1;
+    public int requiredUpgrades = 1;
 
     public void GetCityTiles(List<bool> takenTiles, TerrainGeneration terrainGeneration, CityHandler cityHandler, float measureError, Color color)
     {

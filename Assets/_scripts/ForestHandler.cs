@@ -6,6 +6,7 @@ using UnityEngine;
 public class ForestHandler : MonoBehaviour
 {
     public TerrainGeneration terrainGeneration;
+    public PlayerHandler playerHandler;
     public GameObject forestPrefab;
     public float forestProcentage;
     public List<GameObject> forests = new List<GameObject>();
@@ -48,6 +49,7 @@ public class ForestHandler : MonoBehaviour
                 forests.Add(forest);
                 StartCoroutine(animateForest(forest));
                 forestTile.GetComponent<Tile>().isForest = true;
+                forestIndexes.Add(i);
             }
             yield return new WaitForSeconds(0.01f);
         }
@@ -70,5 +72,16 @@ public class ForestHandler : MonoBehaviour
         forest.transform.position = startPos;
     }
 
+    public void SelectedForest(int index)
+    {
+        Debug.Log("Selected Forest: " + index);
+        playerHandler.SelectedForest( forestIndexes.IndexOf(index));
+    }
 
+    public void DeleteForest(int index)
+    {
+        forestIndexes.RemoveAt(index);
+        Destroy(forests[index]);
+        forests.RemoveAt(index);
+    }
 }

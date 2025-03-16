@@ -36,6 +36,7 @@ public class ForestHandler : MonoBehaviour
 
     IEnumerator BuildForests()
     {
+        forestProcentage *= 1000;
         for (int i = 0; i < terrainGeneration.tiles.Count; i++)
         {
             GameObject forestTile = terrainGeneration.tiles[i];
@@ -72,10 +73,10 @@ public class ForestHandler : MonoBehaviour
         forest.transform.position = startPos;
     }
 
-    public void SelectedForest(int index)
+    public void CutForest(int index)
     {
         Debug.Log("Selected Forest: " + index);
-        playerHandler.SelectedForest( forestIndexes.IndexOf(index));
+        playerHandler.CutForest( forestIndexes.IndexOf(index));
     }
 
     public void DeleteForest(int index)

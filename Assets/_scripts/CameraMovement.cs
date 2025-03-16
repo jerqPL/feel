@@ -13,12 +13,12 @@ public class CameraMovement : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
-            Cursor.visible = false;
+            //Cursor.visible = false;
         }
 
         if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonDown(1))
         {
-            Cursor.visible = true;
+            //Cursor.visible = true;
         }
 
 

@@ -150,7 +150,19 @@ public class PlayerHandler : MonoBehaviour
         }
     }
 
-    public void SelectedForest(int index)
+    public bool CanCutForest(int index)
+    {
+        for (int i = 0; i < players[currentPlayer].playerCities.Count; i++)
+        {
+            if (players[currentPlayer].playerCities[i].cityTiles.Contains(index))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void CutForest(int index)
     {
         int goldCost = 2;
         Debug.Log("Forest " + index + " selected");

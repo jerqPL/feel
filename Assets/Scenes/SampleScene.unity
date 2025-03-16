@@ -155,8 +155,11 @@ MonoBehaviour:
   playerHandler: {fileID: 1126503332}
   cityHandler: {fileID: 180350574}
   forestHandler: {fileID: 180350575}
+  selectionArrowHandler: {fileID: 221270040}
+  inGameUIHandler: {fileID: 1780015804}
   selectedTile: 0
   clickDuration: 0
+  onUI: 0
 --- !u!4 &75300349
 Transform:
   m_ObjectHideFlags: 0
@@ -283,6 +286,24 @@ MonoBehaviour:
   forests: []
   forestIndexes: 
   forestRotation: {x: 0, y: 0, z: 0}
+--- !u!1 &221270038 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+  m_PrefabInstance: {fileID: 1935286721}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &221270040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221270038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cd30517cc6912e4587dfa4555246f02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainGeneration: {fileID: 180350572}
 --- !u!1 &560058518
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,6 +316,7 @@ GameObject:
   - component: {fileID: 560058522}
   - component: {fileID: 560058521}
   - component: {fileID: 560058520}
+  - component: {fileID: 560058523}
   m_Layer: 5
   m_Name: EndTurnButton
   m_TagString: Untagged
@@ -416,6 +438,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 560058518}
   m_CullTransparentMesh: 1
+--- !u!114 &560058523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 560058518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd7ce8721c9120d449353d2837920219, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectionHandler: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,7 +1112,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerHandler: {fileID: 1126503332}
+  selectionHandler: {fileID: 75300348}
   goldText: {fileID: 954761994}
+  cutButton: {fileID: 2067305860}
 --- !u!4 &1780015805
 Transform:
   m_ObjectHideFlags: 0
@@ -1227,6 +1264,66 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1882622849}
   m_CullTransparentMesh: 1
+--- !u!1001 &1935286721
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      propertyPath: m_Name
+      value: selectionArro1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 221270040}
+  m_SourcePrefab: {fileID: 100100000, guid: def291c25dcd5d24a8a036f5ad4ff6be, type: 3}
 --- !u!1 &2030295142
 GameObject:
   m_ObjectHideFlags: 0
@@ -1307,6 +1404,7 @@ GameObject:
   - component: {fileID: 2067305864}
   - component: {fileID: 2067305863}
   - component: {fileID: 2067305862}
+  - component: {fileID: 2067305865}
   m_Layer: 5
   m_Name: AxeButton
   m_TagString: Untagged
@@ -1377,7 +1475,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2067305863}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1780015804}
+        m_TargetAssemblyTypeName: InGameUIHandler, Assembly-CSharp
+        m_MethodName: CutForest
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2067305863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1416,6 +1526,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2067305860}
   m_CullTransparentMesh: 1
+--- !u!114 &2067305865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2067305860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd7ce8721c9120d449353d2837920219, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectionHandler: {fileID: 0}
 --- !u!1 &2123875845 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8163990321920491356, guid: 899b2fb42788f984391658fdb1943ef3, type: 3}
@@ -1520,3 +1643,4 @@ SceneRoots:
   - {fileID: 2030295145}
   - {fileID: 1780015805}
   - {fileID: 75300349}
+  - {fileID: 1935286721}

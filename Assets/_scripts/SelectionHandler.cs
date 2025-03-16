@@ -8,12 +8,19 @@ public class SelectionHandler : MonoBehaviour
     public PlayerHandler playerHandler;
     public CityHandler cityHandler;
     public ForestHandler forestHandler;
+    public SelectionArrowHandler selectionArrowHandler;
+    public InGameUIHandler inGameUIHandler;
     public int selectedTile;
 
     public float clickDuration = 0f;
+    public bool onUI = false;
 
     void Update()
     {
+        if (onUI)
+        {
+            return;
+        }
         if (Input.GetKey(KeyCode.Mouse0))
         {
             clickDuration += Time.deltaTime;
@@ -38,18 +45,33 @@ public class SelectionHandler : MonoBehaviour
         {
             if (hit.collider.tag == "Tile")
             {
+
                 GameObject tile = hit.collider.gameObject;
                 selectedTile = tile.GetComponent<Tile>().index;
+                selectionArrowHandler.MoveArrow(selectedTile);
                 playerHandler.playerCameras[playerHandler.currentPlayer].GetComponent<CameraMovement>().rotaionPivot = tile.transform.position;
 
 
                 if (tile.GetComponent<Tile>().isCity)
                 {
                     cityHandler.SelectedCity(selectedTile);
+                    inGameUIHandler.HideCutButton();
                 }
                 else if (tile.GetComponent<Tile>().isForest)
                 {
-                    forestHandler.SelectedForest(selectedTile);
+                    if (playerHandler.CanCutForest(selectedTile))
+                    {
+                        inGameUIHandler.ShowCutButton();
+                    }
+                    else
+                    {
+                        inGameUIHandler.HideCutButton();
+                        //forestHandler.SelectedForest(selectedTile);
+                    }
+                }
+                else
+                {
+                    inGameUIHandler.HideCutButton();
                 }
 
 

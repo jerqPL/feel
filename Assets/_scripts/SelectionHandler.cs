@@ -36,6 +36,13 @@ public class SelectionHandler : MonoBehaviour
 
         }
     }
+
+    void HideEverything()
+    {
+        inGameUIHandler.HideCutButton();
+        inGameUIHandler.HideRecruitSwordmanButton();
+    }
+
     void AfterClick()
     {
         Debug.Log("Mouse0");
@@ -51,11 +58,12 @@ public class SelectionHandler : MonoBehaviour
                 selectionArrowHandler.MoveArrow(selectedTile);
                 playerHandler.playerCameras[playerHandler.currentPlayer].GetComponent<CameraMovement>().rotaionPivot = tile.transform.position;
 
+                HideEverything();
 
                 if (tile.GetComponent<Tile>().isCity)
                 {
                     cityHandler.SelectedCity(selectedTile);
-                    inGameUIHandler.HideCutButton();
+                    inGameUIHandler.ShowRecruitSwordmanButton();
                 }
                 else if (tile.GetComponent<Tile>().isForest)
                 {
@@ -63,18 +71,7 @@ public class SelectionHandler : MonoBehaviour
                     {
                         inGameUIHandler.ShowCutButton();
                     }
-                    else
-                    {
-                        inGameUIHandler.HideCutButton();
-                        //forestHandler.SelectedForest(selectedTile);
-                    }
                 }
-                else
-                {
-                    inGameUIHandler.HideCutButton();
-                }
-
-
             }
         }
         else

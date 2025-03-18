@@ -36,7 +36,7 @@ public class ForestHandler : MonoBehaviour
 
     IEnumerator BuildForests()
     {
-        forestProcentage *= 1000;
+        //forestProcentage *= 1000;
         for (int i = 0; i < terrainGeneration.tiles.Count; i++)
         {
             GameObject forestTile = terrainGeneration.tiles[i];

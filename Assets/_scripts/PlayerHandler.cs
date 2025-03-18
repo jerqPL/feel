@@ -14,6 +14,7 @@ public class PlayerHandler : MonoBehaviour
     public TerrainGeneration terrainGeneration;
     public InGameUIHandler inGameUIHandler;
     public ForestHandler forestHandler;
+    public UnitHandler unitHandler;
 
     public List<Player> players = new List<Player>();
 
@@ -162,6 +163,13 @@ public class PlayerHandler : MonoBehaviour
         return false;
     }
 
+    public bool CanCutForestAndHaveGold(int index)
+    {
+        int goldCost = 2;
+        if (CanCutForest(index) && playerGold[currentPlayer] >= goldCost) return true;
+        return false;
+    }
+
     public void CutForest(int index)
     {
         int goldCost = 2;
@@ -190,6 +198,35 @@ public class PlayerHandler : MonoBehaviour
             }
         }
     }
+
+    public bool CanRecruitSwordman(int index)
+    {
+        int swordmanCost = 5;
+
+        foreach (Unit unit in unitHandler.units)
+        {
+            if (unit.position == index) return false;
+        }
+        if (playerGold[currentPlayer] >= swordmanCost)
+        {
+            foreach (PlayerCity playerCity in players[currentPlayer].playerCities)
+            {
+                if (cityHandler.cityIndexes[playerCity.cityIndex] == index)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void RecruitSwordman( int index)
+    {
+        int swordmanCost = 5;
+        players[currentPlayer].units.Add(unitHandler.CreateUnit(index, 0));
+        playerGold[currentPlayer] -= swordmanCost;
+        inGameUIHandler.SetGold(playerGold[currentPlayer], players[currentPlayer].goldGain);
+    }
 }
 
 public class Player
@@ -200,6 +237,8 @@ public class Player
     public Color playerColor;
     public Color playerColorEdge;
     public int goldGain = 1;
+
+    public List<Unit> units = new List<Unit>();
 
 }
 

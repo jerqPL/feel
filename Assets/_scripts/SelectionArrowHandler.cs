@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
-using TreeEditor;
 using UnityEngine;
 
 public class SelectionArrowHandler : MonoBehaviour
 {
     public TerrainGeneration terrainGeneration;
+    bool animate = false;
 
     private void Start()
     {
-        StartCoroutine(animateArrow());
+        if (animate)
+        {
+            StartCoroutine(animateArrow());
+        }
     }
 
     public void MoveArrow(int index)

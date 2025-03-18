@@ -9,6 +9,7 @@ public class InGameUIHandler : MonoBehaviour
     public SelectionHandler selectionHandler;
     public TMP_Text goldText;
     public GameObject cutButton;
+    public GameObject recruitSwordmanButton;
 
     private void Start()
     {
@@ -35,6 +36,17 @@ public class InGameUIHandler : MonoBehaviour
         StartCoroutine(notOnUI());
     }
 
+    public void ShowRecruitSwordmanButton()
+    {
+        recruitSwordmanButton.SetActive(true);
+    }
+
+    public void HideRecruitSwordmanButton()
+    {
+        recruitSwordmanButton.SetActive(false);
+        StartCoroutine(notOnUI());
+    }
+
     IEnumerator notOnUI()
     {
         yield return null;
@@ -43,7 +55,19 @@ public class InGameUIHandler : MonoBehaviour
 
     public void CutForest()
     {
-        selectionHandler.forestHandler.CutForest(selectionHandler.selectedTile);
-        HideCutButton();
+        if (selectionHandler.playerHandler.CanCutForestAndHaveGold(selectionHandler.selectedTile))
+        {
+            selectionHandler.forestHandler.CutForest(selectionHandler.selectedTile);
+            HideCutButton();
+        }
+        
+        
+    }
+
+    public void RecruitSwordman()
+    {
+        Debug.Log("RecruitSwordman");
+        if (playerHandler.CanRecruitSwordman(selectionHandler.selectedTile))
+            playerHandler.RecruitSwordman(selectionHandler.selectedTile);
     }
 }
